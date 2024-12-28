@@ -1,5 +1,7 @@
-Contest Management System
+Contest Management System (ASM masters configuration)
 =========================
+
+Kudos to [Amirhasan](https://github.com/ahjafar) for his initial contribution to the project!
 
 Homepage: <http://cms-dev.github.io/>
 
