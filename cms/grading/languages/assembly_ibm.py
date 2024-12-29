@@ -21,6 +21,8 @@
 
 from cms.grading import CompiledLanguage
 
+import os
+
 
 __all__ = ["ASM_ibm"]
 
@@ -39,7 +41,7 @@ class ASM_ibm(CompiledLanguage):
     @property
     def source_extensions(self):
         """See Language.source_extensions."""
-        return [".asm", ".S", ".s"]
+        return [".s"]
 
     @property
     def header_extensions(self):
@@ -59,6 +61,8 @@ class ASM_ibm(CompiledLanguage):
             with library object files.
         """
         command = ["/bin/ibm-judge" ]
+        for i in range(len(source_filenames)):
+            source_filenames[i] = os.path.splitext(source_filenames[i])[0]
         command += source_filenames
         command += [executable_filename]
         return [command]
