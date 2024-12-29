@@ -198,7 +198,7 @@ setup(
             "Python 3 / CPython=cms.grading.languages.python3_cpython:Python3CPython",
             "Python 3 / PyPy=cms.grading.languages.python3_pypy:Python3PyPy",
             "Rust=cms.grading.languages.rust:Rust",
-            "Assembly_nasm=cms.grding.languages.assembly_nasm:ASM_nasm",
+            "Assembly_nasm=cms.grading.languages.assembly_nasm:ASM_nasm",
             "Assembly_ibm=cms.grading.languages.assembly_ibm:ASM_ibm",
         ],
     },
