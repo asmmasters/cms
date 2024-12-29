@@ -103,7 +103,7 @@ class Config:
 
         # Worker.
         self.keep_sandbox = True
-        self.use_cgroups = True
+        self.use_cgroups = False
         self.sandbox_implementation = 'isolate'
 
         # Sandbox.
