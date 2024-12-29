@@ -66,3 +66,10 @@ class ASM_ibm(CompiledLanguage):
         command += source_filenames
         command += [executable_filename]
         return [command]
+
+    def get_evaluation_commands(
+            self, executable_filename, main=None, args=None):
+        """See Language.get_evaluation_commands."""
+
+        return [["/usr/bin/qemu-s390x", executable_filename]]
+
