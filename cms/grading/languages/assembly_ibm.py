@@ -71,5 +71,5 @@ class ASM_ibm(CompiledLanguage):
             self, executable_filename, main=None, args=None):
         """See Language.get_evaluation_commands."""
 
-        return [["/usr/bin/qemu-s390x", executable_filename]]
+        return [["/usr/bin/sag", executable_filename]]
 
