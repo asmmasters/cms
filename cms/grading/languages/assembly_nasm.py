@@ -36,7 +36,7 @@ class ASM_nasm(CompiledLanguage):
     @property
     def name(self):
         """See Language.name."""
-        return "Assembly_x86"
+        return "Assembly_nasm"
 
     @property
     def source_extensions(self):
