@@ -60,7 +60,7 @@ class ASM_nasm(CompiledLanguage):
             a bash grader should be added to managers
             with library object files.
         """
-        command = ["/bin/nasm-judge" ]
+        command = ["/bin/nasm-compile" ]
         for i in range(len(source_filenames)):
             source_filenames[i] = os.path.splitext(source_filenames[i])[0]
         command += source_filenames

@@ -65,7 +65,7 @@ class ASM_ibm(CompiledLanguage):
             a bash grader should be added to managers
             with library object files.
         """
-        command = ["/bin/ibm-judge" ]
+        command = ["/bin/ibm-compile" ]
         for i in range(len(source_filenames)):
             source_filenames[i] = os.path.splitext(source_filenames[i])[0]
         command += source_filenames
@@ -76,5 +76,5 @@ class ASM_ibm(CompiledLanguage):
             self, executable_filename, main=None, args=None):
         """See Language.get_evaluation_commands."""
 
-        return [["/usr/bin/sag", executable_filename]]
+        return [["/bin/ibm-eval", executable_filename]]
 
