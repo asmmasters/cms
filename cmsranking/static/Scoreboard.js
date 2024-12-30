@@ -15,18 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var escapeHTML = (function() {
+var escapeHTML = (function () {
     var escapeMap = {
-        '&' : '&amp;',
-        '<' : '&lt;',
-        '>' : '&gt;',
-        '"' : '&quot;',
-        "'" : '&#x27;',
-        '/' : '&#x2F;',
-        '`' : '&#x60;'
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;',
+        '/': '&#x2F;',
+        '`': '&#x60;'
     };
-    var escapeHTML = function(str) {
-        return String(str).replace(/[&<>"'\/`]/g, function(ch) {
+    var escapeHTML = function (str) {
+        return String(str).replace(/[&<>"'\/`]/g, function (ch) {
             return escapeMap[ch];
         });
     };
@@ -99,12 +99,12 @@ var Scoreboard = new function () {
         });
 
         // Create callbacks for animation-end
-        self.tbody_el.on('animationend', 'tr', function(event) {
+        self.tbody_el.on('animationend', 'tr', function (event) {
             $(this).removeClass("score_up score_down");
         });
 
         // Fuck, WebKit!!
-        self.tbody_el.on('webkitAnimationEnd', 'tr', function(event) {
+        self.tbody_el.on('webkitAnimationEnd', 'tr', function (event) {
             $(this).removeClass("score_up score_down");
         });
     };
@@ -218,14 +218,32 @@ var Scoreboard = new function () {
     };
 
 
-    self.make_body = function () {
-        for (var u_id in DataStore.users) {
-            var user = DataStore.users[u_id];
-            user["row"] = $(self.make_row(user))[0];
-            self.user_list.push(user);
+    self.make_first_ac = function () {
+        self.first_ac = {};
+        let hist = [...HistoryStore.history_t];
+        hist.sort((a, b) => a[2] - b[2]);
+        for ([user_id, task_id, time, score] of hist) {
+            if (task_id in self.first_ac || score < DataStore.tasks[task_id].max_score)
+                continue;
+            console.log(`First AC of ${user_id} for ${task_id}`);
+            self.first_ac[task_id] = user_id;
         }
+        console.log("All first AC:", self.first_ac);
+    };
 
-        self.sort();
+
+    self.make_body = function () {
+        HistoryStore.request_update(() => {
+            self.make_first_ac()
+
+            for (var u_id in DataStore.users) {
+                var user = DataStore.users[u_id];
+                user["row"] = $(self.make_row(user))[0];
+                self.user_list.push(user);
+            }
+
+            self.sort();
+        });
     };
 
 
@@ -257,6 +275,9 @@ var Scoreboard = new function () {
                 var t_id = task["key"];
 
                 var score_class = self.get_score_class(user["t_" + t_id], task["max_score"]);
+                if (self.first_ac[t_id] === user.key) {
+                    score_class = "score_firstac";
+                }
                 result += " \
     <td colspan=\"3\" class=\"score task " + score_class + "\" data-task=\"" + t_id + "\" data-sort_key=\"t_" + t_id + "\">" + round_to_str(user["t_" + t_id], task["score_precision"]) + "</td>";
             }
@@ -302,10 +323,10 @@ var Scoreboard = new function () {
     self.compare_users = function (a, b) {
         var sort_key = self.sort_key;
         if ((a[sort_key] > b[sort_key]) || ((a[sort_key] == b[sort_key]) &&
-           ((a["global"] > b["global"]) || ((a["global"] == b["global"]) &&
-           ((a["l_name"] < b["l_name"]) || ((a["l_name"] == b["l_name"]) &&
-           ((a["f_name"] < b["f_name"]) || ((a["f_name"] == b["f_name"]) &&
-           (a["key"] <= b["key"]))))))))) {
+            ((a["global"] > b["global"]) || ((a["global"] == b["global"]) &&
+                ((a["l_name"] < b["l_name"]) || ((a["l_name"] == b["l_name"]) &&
+                    ((a["f_name"] < b["f_name"]) || ((a["f_name"] == b["f_name"]) &&
+                        (a["key"] <= b["key"]))))))))) {
             return -1;
         } else {
             return +1;
@@ -322,11 +343,11 @@ var Scoreboard = new function () {
         var list_l = list.length;
         var i = parseInt(user["index"]);
 
-        if (i > 0 && compare(user, list[i-1]) == -1) {
+        if (i > 0 && compare(user, list[i - 1]) == -1) {
             // Move up
 
-            while (i > 0 && compare(user, list[i-1]) == -1) {
-                list[i] = list[i-1];
+            while (i > 0 && compare(user, list[i - 1]) == -1) {
+                list[i] = list[i - 1];
                 list[i]["index"] = i;
                 i -= 1;
             }
@@ -336,23 +357,23 @@ var Scoreboard = new function () {
             if (i == 0) {
                 self.tbody_el.prepend(user["row"]);
             } else {
-                self.tbody_el.children("tr.user[data-user=" + list[i-1]["key"] + "]").after(user["row"]);
+                self.tbody_el.children("tr.user[data-user=" + list[i - 1]["key"] + "]").after(user["row"]);
             }
-        } else if (i < list_l-1 && compare(list[i+1], user) == -1) {
+        } else if (i < list_l - 1 && compare(list[i + 1], user) == -1) {
             // Move down
 
-            while (i < list_l-1 && compare(list[i+1], user) == -1) {
-                list[i] = list[i+1];
+            while (i < list_l - 1 && compare(list[i + 1], user) == -1) {
+                list[i] = list[i + 1];
                 list[i]["index"] = i;
                 i += 1;
             }
             list[i] = user;
             user["index"] = i;
 
-            if (i == list_l-1) {
+            if (i == list_l - 1) {
                 self.tbody_el.append(user["row"]);
             } else {
-                self.tbody_el.children("tr.user[data-user=" + list[i+1]["key"] + "]").before(user["row"]);
+                self.tbody_el.children("tr.user[data-user=" + list[i + 1]["key"] + "]").before(user["row"]);
             }
         }
     };
@@ -365,8 +386,7 @@ var Scoreboard = new function () {
         list.sort(self.compare_users);
 
         var fragment = document.createDocumentFragment();
-        for (var idx in list)
-        {
+        for (var idx in list) {
             list[idx]["index"] = idx;
             fragment.appendChild(list[idx]["row"]);
         }
