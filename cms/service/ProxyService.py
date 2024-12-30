@@ -326,12 +326,12 @@ class ProxyService(TriggeredService):
         """
         logger.info("Initializing rankings.")
 
-        contest_ids = [self.contest_id]
-        if self.contest_id is None:
-            contest_ids = [row.id for row in get_contest_list()]
+        with SessionGen() as session:
+            contest_ids = [self.contest_id]
+            if self.contest_id is None:
+                contest_ids = [row.id for row in get_contest_list(session)]
 
-        for cid in contest_ids:
-            with SessionGen() as session:
+            for cid in contest_ids:
                 contest = Contest.get_from_id(cid, session)
 
                 if contest is None:
@@ -379,11 +379,11 @@ class ProxyService(TriggeredService):
                         "score_mode": task.score_mode,
                     }
 
-            self.enqueue(ProxyOperation(ProxyExecutor.CONTEST_TYPE,
-                                        {contest_id: contest_data}))
-            self.enqueue(ProxyOperation(ProxyExecutor.TEAM_TYPE, teams))
-            self.enqueue(ProxyOperation(ProxyExecutor.USER_TYPE, users))
-            self.enqueue(ProxyOperation(ProxyExecutor.TASK_TYPE, tasks))
+                self.enqueue(ProxyOperation(ProxyExecutor.CONTEST_TYPE,
+                                            {contest_id: contest_data}))
+                self.enqueue(ProxyOperation(ProxyExecutor.TEAM_TYPE, teams))
+                self.enqueue(ProxyOperation(ProxyExecutor.USER_TYPE, users))
+                self.enqueue(ProxyOperation(ProxyExecutor.TASK_TYPE, tasks))
 
     def operations_for_score(self, submission):
         """Send the score for the given submission to all rankings.
