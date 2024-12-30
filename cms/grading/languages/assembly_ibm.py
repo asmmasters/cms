@@ -53,6 +53,11 @@ class ASM_ibm(CompiledLanguage):
         """See Language.source_extensions."""
         return [".o"]
 
+    @property
+    def requires_multithreading(self):
+        """See Language.requires_multithreading."""
+        return True
+
     def get_compilation_commands(self,
                                  source_filenames, executable_filename,
                                  for_evaluation=True):
