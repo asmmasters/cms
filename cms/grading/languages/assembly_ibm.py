@@ -36,7 +36,7 @@ class ASM_ibm(CompiledLanguage):
     @property
     def name(self):
         """See Language.name."""
-        return "Assembly_ibm"
+        return "Assembly_s390x"
 
     @property
     def source_extensions(self):
