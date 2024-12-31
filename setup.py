@@ -200,6 +200,7 @@ setup(
             "Rust=cms.grading.languages.rust:Rust",
             "Assembly_nasm=cms.grading.languages.assembly_nasm:ASM_nasm",
             "Assembly_ibm=cms.grading.languages.assembly_ibm:ASM_ibm",
+            "Syscall_emu=cms.grading.languages.syscall_emu:Syscall_emu",
         ],
     },
     keywords="ioi programming contest grader management system",
