@@ -50,12 +50,11 @@ $(document).ready(function () {
         <div id="navigation_bar" class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="brand" href="{{ contest_url() }}">{{ contest.description }}</a>
-
                     {% if contest.description == "Phase1-s390x" %}
                     <a class="brand" href="https://cms.asmmasters.ir/Phase1-x86">Phase1-x86</a>
                     {% endif %}
 
+                    <a class="brand" href="{{ contest_url() }}">{{ contest.description }}</a>
 
                     {% if contest.description == "Phase1-x86" %}
                     <a class="brand" href="https://cms.asmmasters.ir/Phase1-s390x">Phase1-s390x</a>
