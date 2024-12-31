@@ -303,6 +303,8 @@ class BaseHandler(CommonRequestHandler):
         params["timestamp"] = make_datetime()
         params["contest"] = self.contest
         params["url"] = self.url
+        params["all_cts"] = self.sql_session.query(Contest).all()
+        params["url_test"] = self.url
         params["xsrf_form_html"] = self.xsrf_form_html()
         # FIXME These objects provide too broad an access: their usage
         # should be extracted into with narrower-scoped parameters.
