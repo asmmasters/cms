@@ -24,7 +24,7 @@ from cms.grading import CompiledLanguage
 import os
 
 
-__all__ = ["ASMs390x"]
+__all__ = ["ASM_ibm"]
 
 
 class ASM_ibm(CompiledLanguage):
@@ -36,7 +36,7 @@ class ASM_ibm(CompiledLanguage):
     @property
     def name(self):
         """See Language.name."""
-        return "Assembly / s390x"
+        return "Assembly_ibm"
 
     @property
     def source_extensions(self):

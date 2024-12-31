@@ -24,7 +24,7 @@ from cms.grading import CompiledLanguage
 import os
 
 
-__all__ = ["ASMx86"]
+__all__ = ["ASM_nasm"]
 
 
 class ASM_nasm(CompiledLanguage):
@@ -36,7 +36,7 @@ class ASM_nasm(CompiledLanguage):
     @property
     def name(self):
         """See Language.name."""
-        return "Assembly / x86"
+        return "Assembly_nasm"
 
     @property
     def source_extensions(self):
