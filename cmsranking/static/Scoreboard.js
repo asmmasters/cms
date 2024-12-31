@@ -153,8 +153,8 @@ var Scoreboard = new function () {
         var result = " \
 <col class=\"sel\"/> \
 <col class=\"rank\"/> \
-// <col class=\"f_name\"/> <col/><col/><col/><col/><col/><col/><col/><col/><col/> \
-// <col class=\"l_name\"/> <col/><col/><col/><col/><col/><col/><col/><col/><col/> \
+<col class=\"f_name\"/> <col/><col/><col/><col/><col/><col/><col/><col/><col/> \
+<col class=\"l_name\"/> <col/><col/><col/><col/><col/><col/><col/><col/><col/> \
 <col class=\"team\"/>";
 
         var contests = DataStore.contest_list;
@@ -188,8 +188,8 @@ var Scoreboard = new function () {
 <tr> \
     <th class=\"sel\"></th> \
     <th class=\"rank\">Rank</th> \
-    <th colspan=\"10\" class=\"f_name\">First Name</th> \
-    <th colspan=\"10\" class=\"l_name\">Last Name</th> \
+    // <th colspan=\"10\" class=\"f_name\">First Name</th> \
+    // <th colspan=\"10\" class=\"l_name\">Last Name</th> \
     <th class=\"team\">Team</th>";
 
         var contests = DataStore.contest_list;
