@@ -51,7 +51,7 @@ $(document).ready(function () {
             <div class="navbar-inner">
                 <div class="container">
                     <a class="brand" href="{{ contest_url() }}">{{ contest.description }}</a>
-                    {% for cts in contest_list %}
+                    {% for cts in r_params["contest_list"] %}
                     <a class="brand" href="">{{ cts.description }}</a>
                     <a class="brand" href="">{{ cts }}</a>
                     {% endfor %}
