@@ -484,7 +484,7 @@ class ProxyService(TriggeredService):
 
             # ScoringService sent us a submission of another contest, they
             # do not know about our contest_id in multicontest setup.
-            if self.contest_id is not None or submission.task.contest_id != self.contest_id:
+            if self.contest_id is not None and submission.task.contest_id != self.contest_id:
                 logger.debug("Ignoring submission %d of contest %d "
                              "(this ProxyService considers contest %d only).",
                              submission.id, submission.task.contest_id,
@@ -528,7 +528,7 @@ class ProxyService(TriggeredService):
 
             # ScoringService sent us a submission of another contest, they
             # do not know about our contest_id in multicontest setup.
-            if self.contest_id is not None or submission.task.contest_id != self.contest_id:
+            if self.contest_id is not None and submission.task.contest_id != self.contest_id:
                 logger.debug("Ignoring submission %d of contest %d "
                              "(this ProxyService considers contest %d only).",
                              submission.id, submission.task.contest_id,
@@ -571,7 +571,7 @@ class ProxyService(TriggeredService):
 
             # This ProxyService may focus on a different contest, and it should
             # ignore this update.
-            if self.contest_id is not None or task.contest_id != self.contest_id:
+            if self.contest_id is not None and task.contest_id != self.contest_id:
                 logger.debug("Ignoring dataset change for task %d of contest "
                              "%d (this ProxyService considers contest %d "
                              "only).", task_id, task.contest.id,
