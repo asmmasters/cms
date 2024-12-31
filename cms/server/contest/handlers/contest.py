@@ -172,7 +172,6 @@ class ContestHandler(BaseHandler):
         ret = super().render_params()
 
         ret["contest"] = self.contest
-        ret["contest_list"] = self.sql_session.query(Contest).all()
 
         if self.contest_url is not None:
             ret["contest_url"] = self.contest_url

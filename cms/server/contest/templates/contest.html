@@ -52,9 +52,14 @@ $(document).ready(function () {
                 <div class="container">
                     <a class="brand" href="{{ contest_url() }}">{{ contest.description }}</a>
 
-                    {% for c in all_contest %}
-                    <a class="brand" href="">{{ c }}</a>
-                    {% endfor %}
+                    {% if contest.description == "Phase1-s390x" %}
+                    <a class="brand" href="https://cms.asmmasters.ir/Phase1-x86">Phase1-x86</a>
+                    {% endif %}
+
+
+                    {% if contest.description == "Phase1-x86" %}
+                    <a class="brand" href="https://cms.asmmasters.ir/Phase1-s390x">Phase1-s390x</a>
+                    {% endif %}
 
 {% if available_translations|length > 1 %}
                     <p class="navbar-text pull-right">
