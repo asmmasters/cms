@@ -37,7 +37,7 @@ var TimeView = new function () {
     // - 0: elapsed time
     // - 1: remaining time
     // - 2: current (clock) time
-    self.status = 0;
+    self.status = 2;
 
     self.init = function () {
         window.setInterval(function() {
