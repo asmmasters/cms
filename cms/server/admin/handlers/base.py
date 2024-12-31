@@ -678,7 +678,5 @@ def SimpleContestHandler(page):
             self.contest = self.safe_get_item(Contest, contest_id)
 
             self.r_params = self.render_params()
-            self.r_params["contest_list"] = self.sql_session.query(Contest).all()
-            self.r_params["sdf"] = "babaE"
             self.render(page, **self.r_params)
     return Cls
