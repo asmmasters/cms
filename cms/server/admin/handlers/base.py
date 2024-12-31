@@ -303,8 +303,6 @@ class BaseHandler(CommonRequestHandler):
         params["timestamp"] = make_datetime()
         params["contest"] = self.contest
         params["url"] = self.url
-        params["all_cts"] = self.sql_session.query(Contest).all()
-        params["url_test"] = self.url
         params["xsrf_form_html"] = self.xsrf_form_html()
         # FIXME These objects provide too broad an access: their usage
         # should be extracted into with narrower-scoped parameters.
@@ -680,5 +678,7 @@ def SimpleContestHandler(page):
             self.contest = self.safe_get_item(Contest, contest_id)
 
             self.r_params = self.render_params()
+            self.r_params["contest_list"] = self.sql_session.query(Contest).all()
+            self.r_params["sdf"] = "babaE"
             self.render(page, **self.r_params)
     return Cls
