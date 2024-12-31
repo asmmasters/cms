@@ -133,7 +133,7 @@ var TimeView = new function () {
                 } else if (self.status == 1) {
                     $("#TimeView").removeClass("elapsed current");
                     $("#TimeView").addClass("remaining");
-                    time = cur_time - c['end'];
+                    time = c['end'] - cur_time;
                 } else {
                     $("#TimeView").removeClass("remaining current");
                     $("#TimeView").addClass("elapsed");
