@@ -41,7 +41,7 @@ from sqlalchemy import not_
 
 from cms import config
 from cms.db import SessionGen, Contest, Participation, Task, Submission, \
-    get_submissions
+    get_submissions, get_contest_list
 from cms.io import Executor, QueueItem, TriggeredService, rpc_method
 from cmscommon.datetime import make_timestamp
 
@@ -247,7 +247,7 @@ class ProxyService(TriggeredService):
 
     """
 
-    def __init__(self, shard, contest_id):
+    def __init__(self, shard, contest_id=None):
         """Start the service with the given parameters.
 
         Create an instance of the ProxyService and make it listen on
@@ -327,58 +327,63 @@ class ProxyService(TriggeredService):
         logger.info("Initializing rankings.")
 
         with SessionGen() as session:
-            contest = Contest.get_from_id(self.contest_id, session)
+            contest_ids = [self.contest_id]
+            if self.contest_id is None:
+                contest_ids = [row.id for row in get_contest_list(session)]
 
-            if contest is None:
-                logger.error("Received request for unexistent contest "
-                             "id %s.", self.contest_id)
-                raise KeyError("Contest not found.")
+            for cid in contest_ids:
+                contest = Contest.get_from_id(cid, session)
 
-            contest_id = encode_id(contest.name)
-            contest_data = {
-                "name": contest.description,
-                "begin": int(make_timestamp(contest.start)),
-                "end": int(make_timestamp(contest.stop)),
-                "score_precision": contest.score_precision}
+                if contest is None:
+                    logger.error("Received request for unexistent contest "
+                                "id %s.", cid)
+                    raise KeyError("Contest not found.")
 
-            users = dict()
-            teams = dict()
+                contest_id = encode_id(contest.name)
+                contest_data = {
+                    "name": contest.description,
+                    "begin": int(make_timestamp(contest.start)),
+                    "end": int(make_timestamp(contest.stop)),
+                    "score_precision": contest.score_precision}
 
-            for participation in contest.participations:
-                user = participation.user
-                team = participation.team
-                if not participation.hidden:
-                    users[encode_id(user.username)] = {
-                        "f_name": user.first_name,
-                        "l_name": user.last_name,
-                        "team": encode_id(team.code)
-                                if team is not None else None,
-                    }
-                    if team is not None:
-                        teams[encode_id(team.code)] = {
-                            "name": team.name
+                users = dict()
+                teams = dict()
+
+                for participation in contest.participations:
+                    user = participation.user
+                    team = participation.team
+                    if not participation.hidden:
+                        users[encode_id(user.username)] = {
+                            "f_name": user.first_name,
+                            "l_name": user.last_name,
+                            "team": encode_id(team.code)
+                                    if team is not None else None,
                         }
+                        if team is not None:
+                            teams[encode_id(team.code)] = {
+                                "name": team.name
+                            }
 
-            tasks = dict()
+                tasks = dict()
 
-            for task in contest.tasks:
-                score_type = task.active_dataset.score_type_object
-                tasks[encode_id(task.name)] = {
-                    "short_name": task.name,
-                    "name": task.title,
-                    "contest": encode_id(contest.name),
-                    "order": task.num,
-                    "max_score": score_type.max_score,
-                    "extra_headers": score_type.ranking_headers,
-                    "score_precision": task.score_precision,
-                    "score_mode": task.score_mode,
-                }
+                for task in contest.tasks:
+                    score_type = task.active_dataset.score_type_object
+                    tasks[encode_id(task.name)] = {
+                        "short_name": task.name,
+                        "name": task.title,
+                        "contest": encode_id(contest.name),
+                        "order": task.num,
+                        "max_score": score_type.max_score,
+                        "extra_headers": score_type.ranking_headers,
+                        "score_precision": task.score_precision,
+                        "score_mode": task.score_mode,
+                    }
 
-        self.enqueue(ProxyOperation(ProxyExecutor.CONTEST_TYPE,
-                                    {contest_id: contest_data}))
-        self.enqueue(ProxyOperation(ProxyExecutor.TEAM_TYPE, teams))
-        self.enqueue(ProxyOperation(ProxyExecutor.USER_TYPE, users))
-        self.enqueue(ProxyOperation(ProxyExecutor.TASK_TYPE, tasks))
+                self.enqueue(ProxyOperation(ProxyExecutor.CONTEST_TYPE,
+                                            {contest_id: contest_data}))
+                self.enqueue(ProxyOperation(ProxyExecutor.TEAM_TYPE, teams))
+                self.enqueue(ProxyOperation(ProxyExecutor.USER_TYPE, users))
+                self.enqueue(ProxyOperation(ProxyExecutor.TASK_TYPE, tasks))
 
     def operations_for_score(self, submission):
         """Send the score for the given submission to all rankings.
@@ -479,7 +484,7 @@ class ProxyService(TriggeredService):
 
             # ScoringService sent us a submission of another contest, they
             # do not know about our contest_id in multicontest setup.
-            if submission.task.contest_id != self.contest_id:
+            if self.contest_id is not None or submission.task.contest_id != self.contest_id:
                 logger.debug("Ignoring submission %d of contest %d "
                              "(this ProxyService considers contest %d only).",
                              submission.id, submission.task.contest_id,
@@ -523,7 +528,7 @@ class ProxyService(TriggeredService):
 
             # ScoringService sent us a submission of another contest, they
             # do not know about our contest_id in multicontest setup.
-            if submission.task.contest_id != self.contest_id:
+            if self.contest_id is not None or submission.task.contest_id != self.contest_id:
                 logger.debug("Ignoring submission %d of contest %d "
                              "(this ProxyService considers contest %d only).",
                              submission.id, submission.task.contest_id,
@@ -566,7 +571,7 @@ class ProxyService(TriggeredService):
 
             # This ProxyService may focus on a different contest, and it should
             # ignore this update.
-            if task.contest_id != self.contest_id:
+            if self.contest_id is not None or task.contest_id != self.contest_id:
                 logger.debug("Ignoring dataset change for task %d of contest "
                              "%d (this ProxyService considers contest %d "
                              "only).", task_id, task.contest.id,
