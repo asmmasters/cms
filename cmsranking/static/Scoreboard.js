@@ -254,7 +254,9 @@ var Scoreboard = new function () {
 
         if (user['team']) {
             result += " \
-    <td class=\"team\"><img src=\"" + Config.get_flag_url(user["team"]) + "\" title=\"" + DataStore.teams[user["team"]]["name"] + "\" /></td>";
+    // <td class=\"team\"><img src=\"" + Config.get_flag_url(user["team"]) + "\" title=\"" + DataStore.teams[user["team"]]["name"] + "\" /></td>";
+            result += " \
+    <td class=\"team\">" + user['team'] + "</td>";
         } else {
             result += " \
     <td class=\"team\"></td>";
