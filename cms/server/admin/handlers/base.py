@@ -676,7 +676,6 @@ def SimpleContestHandler(page):
         @require_permission(BaseHandler.AUTHENTICATED)
         def get(self, contest_id):
             self.contest = self.safe_get_item(Contest, contest_id)
-            self.all_cts = self.sql_session.query(Contest).all()
 
             self.r_params = self.render_params()
             self.render(page, **self.r_params)
